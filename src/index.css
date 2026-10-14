@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* If you are on Tailwind v3:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*/
+
+html,
+body {
+  cursor: url("src/assets/cursor 2.png") 0 0, auto;
+}
+a, button {
+  cursor: url("src/assets/pointer.png") 4 0, pointer;
+}
+iframe {
+  cursor: auto !important;
+}
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
