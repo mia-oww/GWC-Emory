@@ -8,10 +8,17 @@
 
 html,
 body {
-  cursor: url("src/assets/cursor 2.png") 0 0, auto;
+  cursor: url("/cursor-small.png") 0 0, auto;
 }
-a, button {
-  cursor: url("src/assets/pointer.png") 4 0, pointer;
+a,
+button,
+[role="button"],
+select,
+summary,
+label[for],
+.cursor-pointer,
+.cursor-pointer * {
+  cursor: url("/pointer-small.png") 1 0, pointer;
 }
 iframe {
   cursor: auto !important;
