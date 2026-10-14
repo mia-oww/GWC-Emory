@@ -17,7 +17,9 @@ import {
   Lightbulb,
   MapPin,
   Sparkles,
-  Play
+  Play,
+  Users,
+  Mail
 } from 'lucide-react';
 
 const STUDENT_PROJECTS = [
@@ -33,13 +35,13 @@ const STUDENT_PROJECTS = [
   },
   {
     id: 2,
-    title: "Community Pet Adoption Showcase",
-    studentGrade: "10th Grade Student",
+    title: "A Long Way Home",
+    studentGrade: "Spring Web Design Student",
     semester: "spring",
     lang: "HTML & CSS",
-    description: "A multipage static website highlighting rescue animals in Atlanta, complete with cute bios and responsive cards.",
-    image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=700&q=80",
-    projectUrl: "https://codepen.io"
+    description: "An adventure story game about a stray cat finding her way home, built during our spring web design unit.",
+    image: "/projects/a-long-way-home.jpg",
+    projectUrl: "https://codepen.io/erial/pen/MYWrMEJ"
   },
   {
     id: 3,
@@ -93,7 +95,75 @@ const TEAM = [
 
 const initials = (name) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-const NAVIGATION_TABS = ['home', 'about', 'projects', 'lectures', 'info'];
+// Questions from parents and prospective students (shown on the For Families tab)
+const FAMILY_FAQS = [
+  {
+    q: "Does my daughter need any coding experience?",
+    a: "Not at all! Our sessions assume zero prior experience, and Emory mentors help every student at her own pace."
+  },
+  {
+    q: "When and where do sessions happen?",
+    a: "Every Sunday at 2pm in the Emory Math & Science Center (MSC) computer classrooms."
+  },
+  {
+    q: "What will she learn?",
+    a: "In the fall, students learn Python through stories and games. In the spring, they build their own web pages with HTML, CSS and JavaScript."
+  },
+  {
+    q: "Can family and friends see her work?",
+    a: "Yes! At the end of the year, every student presents her project on campus at our Family & Friends Celebration Showcase."
+  }
+];
+
+const CONTACT_EMAIL = 'emorygwc@gmail.com';
+const INSTAGRAM_HANDLE = 'gwcemory';
+const MENTOR_EMAIL_BODY = `Hello Girls Who Code at Emory team,
+
+My name is [Your Name], and I am a [Year] [Major] student at Emory University. I am interested in becoming a mentor with Girls Who Code at Emory.
+
+Could you please share the Google Sheets sign-up document so that I can sign up?
+
+Thank you for your time. I look forward to hearing from you.
+
+Best regards,
+[Your Name]`;
+const MENTOR_INTEREST_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Mentor Interest: Girls Who Code at Emory')}&body=${encodeURIComponent(MENTOR_EMAIL_BODY)}`;
+const STUDENT_INTEREST_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Student Interest: Girls Who Code at Emory')}`;
+
+// lucide no longer ships brand icons, so this is a matching outline Instagram glyph
+function InstagramIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Who each audience-specific tab is meant for
+const AUDIENCES = {
+  families: { label: 'For Parents & Students', Icon: Users, iconColor: 'text-[#ec4899]', pill: 'bg-[#fce7f3] text-[#be185d]' },
+  mentors: { label: 'For Emory Students', Icon: Presentation, iconColor: 'text-[#3b82f6]', pill: 'bg-[#dbeafe] text-[#1d4ed8]' },
+};
+
+function AudienceTag({ audience }) {
+  const { label, Icon, pill } = AUDIENCES[audience];
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${pill}`}>
+      <Icon className="w-3.5 h-3.5" aria-hidden="true" /> {label}
+    </span>
+  );
+}
+
+// Tabs with an `audience` are grouped between dividers in the nav
+const NAVIGATION_TABS = [
+  { id: 'home', label: 'Home' },
+  { id: 'families', label: 'For Families', audience: 'families' },
+  { id: 'info', label: 'For Mentors', audience: 'mentors' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'lectures', label: 'Lectures' },
+];
 
 const SEMESTER_FILTERS = [
   { label: 'All Projects', val: 'all' },
@@ -150,9 +220,49 @@ export default function App() {
 
   useScrollFade(activeTab);
 
-  const toggleFaq = (idx) => {
-    setOpenFaq((prevIdx) => (prevIdx === idx ? null : idx));
+  const toggleFaq = (key) => {
+    setOpenFaq((prevKey) => (prevKey === key ? null : key));
   };
+
+  const renderFaqs = (faqs, prefix) =>
+    faqs.map((faq, idx) => {
+      const key = `${prefix}-${idx}`;
+      const isOpen = openFaq === key;
+      const faqId = `faq-content-${key}`;
+      const btnId = `faq-btn-${key}`;
+
+      return (
+        <div
+          key={key}
+          className="border border-[#e7e5e4] rounded-2xl bg-white overflow-hidden"
+        >
+          <button
+            type="button"
+            id={btnId}
+            aria-expanded={isOpen}
+            aria-controls={faqId}
+            onClick={() => toggleFaq(key)}
+            className="w-full text-left px-5 py-4 flex items-center justify-between text-sm text-[#002169] hover:bg-[#faf8f5] transition-colors font-normal cursor-pointer"
+          >
+            <span>{faq.q}</span>
+            <ChevronDown
+              className={`w-4 h-4 text-[#78716c] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
+          {isOpen && (
+            <div
+              id={faqId}
+              role="region"
+              aria-labelledby={btnId}
+              className="px-5 pb-4 text-xs text-[#57534e] leading-relaxed"
+            >
+              {faq.a}
+            </div>
+          )}
+        </div>
+      );
+    });
 
   const toggleArchive = (id) => {
     setExpandedArchive((prev) => (prev === id ? null : id));
@@ -186,21 +296,30 @@ export default function App() {
           </button>
 
           {/* Navigation Tabs */}
-          <nav aria-label="Main Navigation" className="flex items-center gap-1 bg-[#ede8e1]/70 p-1 rounded-full text-sm">
-            {NAVIGATION_TABS.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                aria-current={activeTab === tab ? 'page' : undefined}
-                className={`px-4 py-1.5 rounded-full capitalize transition-all duration-200 text-sm ${
-                  activeTab === tab
-                    ? 'bg-[#002169] text-white shadow-sm font-medium'
-                    : 'text-[#57534e] hover:text-[#002169] font-normal'
-                }`}
-              >
-                {tab}
-              </button>
+          <nav aria-label="Main Navigation" className="flex flex-wrap items-center justify-center gap-1 bg-[#ede8e1]/70 p-1 rounded-3xl sm:rounded-full text-sm">
+            {NAVIGATION_TABS.map((tab, idx) => (
+              <React.Fragment key={tab.id}>
+                {/* divider wherever the nav switches between audience and general tabs */}
+                {idx > 0 && !!tab.audience !== !!NAVIGATION_TABS[idx - 1].audience && (
+                  <span className="hidden sm:block w-px h-5 bg-[#d6d3d1] mx-1" aria-hidden="true" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  aria-current={activeTab === tab.id ? 'page' : undefined}
+                  className={`px-4 py-1.5 rounded-full transition-all duration-200 text-sm inline-flex items-center gap-1.5 ${
+                    activeTab === tab.id
+                      ? 'bg-[#002169] text-white shadow-sm font-medium'
+                      : 'text-[#57534e] hover:text-[#002169] font-normal'
+                  }`}
+                >
+                  {tab.audience && (() => {
+                    const { Icon, iconColor } = AUDIENCES[tab.audience];
+                    return <Icon className={`w-4 h-4 ${activeTab === tab.id ? '' : iconColor}`} aria-hidden="true" />;
+                  })()}
+                  {tab.label}
+                </button>
+              </React.Fragment>
             ))}
           </nav>
         </div>
@@ -226,7 +345,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('info')}
-                    className="gwc-gradient-btn px-6 py-3 rounded-full text-sm font-medium shadow-sm inline-flex items-center gap-2 cursor-pointer"
+                    className="gwc-shine-btn px-6 py-3 rounded-full text-sm font-medium shadow-sm inline-flex items-center gap-2 cursor-pointer"
                   >
                     Join Us as a Mentor <ArrowRight className="w-4 h-4" />
                   </button>
@@ -282,6 +401,42 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            </section>
+
+            {/* Who Are You? Audience Split */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <button
+                type="button"
+                data-fade="up"
+                onClick={() => setActiveTab('families')}
+                className="group p-7 rounded-3xl bg-white border border-[#e7e5e4] shadow-sm text-left space-y-3 cursor-pointer"
+              >
+                <AudienceTag audience="families" />
+                <h2 className="text-xl font-medium text-[#002169]">Want Your Daughter to Learn to Code?</h2>
+                <p className="text-sm text-[#57534e] leading-relaxed">
+                  Weekly Sunday sessions for middle and high school girls. No coding experience needed.
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#db2777]">
+                  Information for Families <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </span>
+              </button>
+
+              <button
+                type="button"
+                data-fade="up"
+                data-fade-delay="150"
+                onClick={() => setActiveTab('info')}
+                className="group p-7 rounded-3xl bg-white border border-[#e7e5e4] shadow-sm text-left space-y-3 cursor-pointer"
+              >
+                <AudienceTag audience="mentors" />
+                <h2 className="text-xl font-medium text-[#002169]">Want to Become a Mentor?</h2>
+                <p className="text-sm text-[#57534e] leading-relaxed">
+                  Teach a mini-lecture or help out at the tables. Every major is welcome.
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2563eb]">
+                  Information for Mentors <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </span>
+              </button>
             </section>
 
             {/* What We Teach */}
@@ -373,6 +528,9 @@ export default function App() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#ffe3f1] text-[#ff4d9d] shadow-sm">
                 <Heart className="w-8 h-8" fill="currentColor" aria-hidden="true" />
               </div>
+              <div>
+                <AudienceTag audience="mentors" />
+              </div>
               <h2 className="text-2xl sm:text-3xl font-medium">Thinking About Getting Involved?</h2>
               <p className="text-sm sm:text-base text-[#3b5288] max-w-xl mx-auto leading-relaxed">
                 Whether you want to lead a 20-minute Python lesson or sit alongside a 7th grader to help her fix a typo, your encouragement makes all the difference.
@@ -381,67 +539,46 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('info')}
-                  className="gwc-gradient-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium cursor-pointer"
+                  className="gwc-shine-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium cursor-pointer"
                 >
                   See Mentor Opportunities <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             </section>
-          </div>
-        )}
 
-        {/* ================= ABOUT TAB ================= */}
-        {activeTab === 'about' && (
-          <div className="space-y-12 max-w-3xl mx-auto">
-            <header data-fade="up" className="space-y-3 text-left">
-              <span className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold">Who We Are</span>
-              <h1 className="text-3xl font-medium text-[#002169]">Mentoring the Next Generation in Atlanta</h1>
-              <p className="text-base text-[#57534e] leading-relaxed font-normal">
-                Girls Who Code at Emory bridges collegiate volunteers with young students across the greater Atlanta area. We believe anyone can learn to program in a space where questions are always welcomed.
-              </p>
-            </header>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
-              <div data-fade="up" data-fade-delay="100" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-2">
-                <div className="text-[#00a79d] font-bold text-lg">01</div>
-                <h2 className="font-medium text-[#002169] text-base">Patience First</h2>
-                <p className="text-xs text-[#78716c] leading-relaxed">Errors are just normal steps toward understanding. We never rush student discovery.</p>
+            {/* Contact Info */}
+            <section data-fade="up" className="p-8 rounded-3xl bg-white border border-[#e7e5e4] space-y-5 text-left max-w-4xl mx-auto w-full">
+              <div className="space-y-1">
+                <h2 className="text-xl font-medium text-[#002169]">Contact Us</h2>
+                <p className="text-sm text-[#57534e]">Questions about joining, mentoring, or anything else? Reach out!</p>
               </div>
-
-              <div data-fade="up" data-fade-delay="200" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-2">
-                <div className="text-[#00a79d] font-bold text-lg">02</div>
-                <h2 className="font-medium text-[#002169] text-base">Creative Expression</h2>
-                <p className="text-xs text-[#78716c] leading-relaxed">Students choose their own topics, from favorite books to local animal shelters and fan clubs.</p>
-              </div>
-
-              <div data-fade="up" data-fade-delay="300" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-2">
-                <div className="text-[#00a79d] font-bold text-lg">03</div>
-                <h2 className="font-medium text-[#002169] text-base">Accessible to All</h2>
-                <p className="text-xs text-[#78716c] leading-relaxed">Both our student sessions and our college mentor program assume zero prior experience.</p>
-              </div>
-            </div>
-
-            <section data-fade="up" className="p-8 rounded-3xl bg-white border border-[#e7e5e4] space-y-6 text-left">
-              <h2 className="text-xl font-medium text-[#002169]">Our Yearly Learning Path</h2>
-              
-              <div className="space-y-6 border-l-2 border-[#ccfbf1] pl-6 ml-2">
-                <div className="space-y-1">
-                  <span className="text-xs text-[#00a79d] font-semibold">Fall Semester</span>
-                  <h3 className="text-base font-normal text-[#002169]">Python Basics & Creative Terminal Games</h3>
-                  <p className="text-sm text-[#57534e]">Girls learn sequential instructions, string manipulation, user inputs, and conditionals by building interactive text adventures.</p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-xs text-[#00a79d] font-semibold">Spring Semester</span>
-                  <h3 className="text-base font-normal text-[#002169]">Front-End Web Pages (HTML, CSS & JS)</h3>
-                  <p className="text-sm text-[#57534e]">Girls transition into visual creation, learning layout structure, color schemes, font styling, and button logic.</p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-xs text-[#00a79d] font-semibold">End of Year</span>
-                  <h3 className="text-base font-normal text-[#002169]">Family & Friends Celebration Showcase</h3>
-                  <p className="text-sm text-[#57534e]">Every girl presents her project on campus, showing parents, teachers, and peers what she created.</p>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="flex items-center gap-3 p-4 rounded-2xl bg-[#faf8f5] hover:bg-[#fce7f3] transition-colors"
+                >
+                  <div className="w-10 h-10 shrink-0 rounded-2xl bg-[#fce7f3] text-[#db2777] flex items-center justify-center">
+                    <Mail className="w-5 h-5" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-xs uppercase tracking-wider text-[#78716c] block">Email</span>
+                    <span className="text-sm font-medium text-[#002169] break-all">{CONTACT_EMAIL}</span>
+                  </div>
+                </a>
+                <a
+                  href={`https://www.instagram.com/${INSTAGRAM_HANDLE}/`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 p-4 rounded-2xl bg-[#faf8f5] hover:bg-[#ede9fe] transition-colors"
+                >
+                  <div className="w-10 h-10 shrink-0 rounded-2xl bg-[#ede9fe] text-[#7c3aed] flex items-center justify-center">
+                    <InstagramIcon className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-xs uppercase tracking-wider text-[#78716c] block">Instagram</span>
+                    <span className="text-sm font-medium text-[#002169]">@{INSTAGRAM_HANDLE}</span>
+                  </div>
+                </a>
               </div>
             </section>
           </div>
@@ -468,7 +605,7 @@ export default function App() {
                   aria-pressed={activeSemester === f.val}
                   className={`px-4 py-1.5 rounded-full text-xs cursor-pointer ${
                     activeSemester === f.val
-                      ? 'gwc-gradient-btn font-medium'
+                      ? 'gwc-shine-btn font-medium'
                       : 'bg-white border border-[#d6d3d1] text-[#57534e] hover:bg-[#faf8f5] font-normal transition-colors'
                   }`}
                 >
@@ -636,11 +773,82 @@ export default function App() {
           </div>
         )}
 
+        {/* ================= FAMILIES TAB ================= */}
+        {activeTab === 'families' && (
+          <div className="space-y-12 max-w-3xl mx-auto text-left">
+            <header data-fade="up" className="space-y-2">
+              <AudienceTag audience="families" />
+              <h1 className="text-3xl font-medium text-[#002169]">Learn to Code With Us</h1>
+              <p className="text-sm text-[#57534e] leading-relaxed">
+                Girls Who Code at Emory introduces middle and high school girls from around Atlanta to computer science. Emory student mentors guide every step, so no prior experience is needed.
+              </p>
+            </header>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div data-fade="up" data-fade-delay="100" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#fce7f3] text-[#db2777] flex items-center justify-center">
+                  <Users className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <h2 className="text-base font-medium text-[#002169]">Who It's For</h2>
+                <p className="text-sm text-[#57534e] leading-relaxed">Middle and high school girls who are curious about coding, whether or not they've tried it before.</p>
+              </div>
+
+              <div data-fade="up" data-fade-delay="200" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#ede9fe] text-[#7c3aed] flex items-center justify-center">
+                  <Calendar className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <h2 className="text-base font-medium text-[#002169]">When & Where</h2>
+                <p className="text-sm text-[#57534e] leading-relaxed">Every Sunday at 2pm in the Emory Math & Science Center (MSC) computer classrooms.</p>
+              </div>
+
+              <div data-fade="up" data-fade-delay="300" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#dbeafe] text-[#2563eb] flex items-center justify-center">
+                  <Code2 className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <h2 className="text-base font-medium text-[#002169]">What She'll Learn</h2>
+                <p className="text-sm text-[#57534e] leading-relaxed">Python in the fall, web design with HTML, CSS & JavaScript in the spring, and a showcase to finish the year.</p>
+              </div>
+            </div>
+
+            <section data-fade="zoom" className="p-8 rounded-3xl bg-white/90 border border-[#e7e5e4] shadow-sm text-[#002169] space-y-4 text-center">
+              <h2 className="text-xl font-medium">Interested in Joining?</h2>
+              <p className="text-sm text-[#3b5288] max-w-md mx-auto leading-relaxed">
+                Send us an email and we'll follow up with next steps.
+              </p>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href={STUDENT_INTEREST_MAILTO}
+                  className="gwc-shine-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium"
+                >
+                  Open Student Interest Form <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('projects')}
+                  className="px-6 py-3 rounded-full bg-white hover:bg-[#f5f5f4] text-[#002169] border border-[#d6d3d1] text-sm font-medium transition-colors cursor-pointer"
+                >
+                  See Student Projects
+                </button>
+              </div>
+            </section>
+
+            <section data-fade="up" className="space-y-4 pt-4">
+              <div className="flex items-center gap-2 text-[#002169]">
+                <HelpCircle className="w-4 h-4 text-[#ec4899]" aria-hidden="true" />
+                <h2 className="text-lg font-medium">Questions From Families</h2>
+              </div>
+              <div className="space-y-3">
+                {renderFaqs(FAMILY_FAQS, 'family')}
+              </div>
+            </section>
+          </div>
+        )}
+
         {/* ================= INFO / MENTOR TAB ================= */}
         {activeTab === 'info' && (
           <div className="space-y-12 max-w-3xl mx-auto text-left">
             <header data-fade="up" className="space-y-2">
-              <span className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold">Get Involved</span>
+              <AudienceTag audience="mentors" />
               <h1 className="text-3xl font-medium text-[#002169]">Mentoring With Us at Emory</h1>
               <p className="text-sm text-[#57534e] leading-relaxed">
                 You don't need any prior teaching background, and you don't have to be a computer science whiz. We provide all slides, templates, and encouragement.
@@ -703,14 +911,12 @@ export default function App() {
             <section data-fade="zoom" className="p-8 rounded-3xl bg-[#002169] text-white space-y-4 text-center">
               <h2 className="text-xl font-normal">Ready to Say Hello?</h2>
               <p className="text-sm text-[#cbd5e1] max-w-md mx-auto leading-relaxed">
-                Fill out our short mentor interest form. Tell us what you'd be interested in doing—no commitment required.
+                Send us a quick email to let us know you're interested, and we'll share the sign-up sheet. No commitment required.
               </p>
               <div className="pt-2">
                 <a
-                  href="https://forms.google.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="gwc-gradient-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium"
+                  href={MENTOR_INTEREST_MAILTO}
+                  className="gwc-shine-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium"
                 >
                   Open Mentor Interest Form <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </a>
@@ -721,47 +927,11 @@ export default function App() {
             <section data-fade="up" className="space-y-4 pt-4">
               <div className="flex items-center gap-2 text-[#002169]">
                 <HelpCircle className="w-4 h-4 text-[#3b82f6]" aria-hidden="true" />
-                <h2 className="text-lg font-medium">Common Questions</h2>
+                <h2 className="text-lg font-medium">Questions From Mentors</h2>
               </div>
 
               <div className="space-y-3">
-                {FAQS.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  const faqId = `faq-content-${idx}`;
-                  const btnId = `faq-btn-${idx}`;
-
-                  return (
-                    <div 
-                      key={idx}
-                      className="border border-[#e7e5e4] rounded-2xl bg-white overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        id={btnId}
-                        aria-expanded={isOpen}
-                        aria-controls={faqId}
-                        onClick={() => toggleFaq(idx)}
-                        className="w-full text-left px-5 py-4 flex items-center justify-between text-sm text-[#002169] hover:bg-[#faf8f5] transition-colors font-normal cursor-pointer"
-                      >
-                        <span>{faq.q}</span>
-                        <ChevronDown 
-                          className={`w-4 h-4 text-[#78716c] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
-                          aria-hidden="true"
-                        />
-                      </button>
-                      {isOpen && (
-                        <div 
-                          id={faqId}
-                          role="region"
-                          aria-labelledby={btnId}
-                          className="px-5 pb-4 text-xs text-[#57534e] leading-relaxed"
-                        >
-                          {faq.a}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                {renderFaqs(FAQS, 'mentor')}
               </div>
             </section>
           </div>
