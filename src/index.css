@@ -1,4 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
 
 /* If you are on Tailwind v3:
 @tailwind base;
@@ -20,6 +25,49 @@ label[for],
 .cursor-pointer * {
   cursor: url("/pointer-small.png") 1 0, pointer;
 }
+/* Button with slowly shifting pastel colors: baby pink, lilac, baby blue */
+.gwc-gradient-btn {
+  color: #111;
+  border: 1px solid #d6d3d1;
+  background-image: linear-gradient(90deg, #fbd5e8, #e3d4fb, #d2e8fb, #fbd5e8);
+  background-size: 300% 100%;
+  opacity: 0.95;
+  animation: gwc-gradient-shift 10s linear infinite;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.gwc-gradient-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+@keyframes gwc-gradient-shift {
+  from { background-position: 0% 50%; }
+  to { background-position: 150% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gwc-gradient-btn { animation: none; }
+}
+
+/* Scroll fade-in animations (see src/useScrollFade.js) */
+[data-fade] {
+  opacity: 0;
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+[data-fade="up"] { transform: translateY(40px); }
+[data-fade="left"] { transform: translateX(40px); }
+[data-fade="right"] { transform: translateX(-40px); }
+[data-fade="zoom"] { transform: scale(0.85); }
+[data-fade].is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-fade] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 iframe {
   cursor: auto !important;
 }
