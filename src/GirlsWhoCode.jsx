@@ -4,6 +4,7 @@ import Cursor from "./Cursor";
 import useScrollFade from './useScrollFade';
 import EventCalendar from './EventCalendar';
 import BackToTop from './BackToTop';
+import SemesterSlides from './SemesterSlides';
 import { 
   BookOpen, 
   Code2, 
@@ -91,7 +92,7 @@ const FAQS = [
 const TEAM = [
   { name: 'Sarah Roodin', role: 'President', year: 2027, blurb: 'Finance & Data Science (Goizueta BBA)', photo: '/team/sarah-roodin.jpg' },
   { name: 'Ainsley Freedman', role: 'Vice President', year: 2027, blurb: 'Jewish Studies (BA) · Computer Science Minor', photo: '/team/ainsley-freedman.jpg' },
-  { name: 'Shuhuan Zhou', role: 'Treasurer', year: 2029, blurb: 'Business Administration (Goizueta BBA)', photo: '/team/shuhuan-zhou.jpg' },
+  { name: 'Shuhan Zhou', role: 'Treasurer', year: 2029, blurb: 'Business Administration (Goizueta BBA)', photo: '/team/shuhan-zhou.jpg' },
   { name: 'Abby Arroyo', role: 'External Affairs', year: 2028, blurb: 'Biology · Data & Decision Sciences Minor', photo: '/team/abby-arroyo.jpg' },
   { name: 'Mia Gomez', role: 'Risk & Events · Website Engineer', year: 2028, blurb: 'CS & AI · Korean Minor', photo: '/team/mia-gomez.jpg' },
   { name: 'Rena Bernardino', role: 'Marketing & Social Media', year: 2028, blurb: 'Economics & Computer Science', photo: '/team/rena-bernardino.jpg' },
@@ -186,7 +187,10 @@ const DEFAULT_LECTURES = [
     term: 'Fall 2026',
     topic: 'Python Basics & Logic Games',
     description: 'Intro to variables, conditionals, while-loops, and interactive terminal storytelling.',
-    embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vTZ9thIOAlFtqVu_s-wd2q3xqv8Amw0Nmb6lmm1TjGqLPnkZJichgv_RTWhv-Yh6k7uHORO1320d5cP/pubembed?start=false&loop=true&delayms=3000'
+    // each lecture can use a PDF in public/lectures/ or a Google Slides `embedUrl`
+    lectures: [
+      { title: 'Lecture 1: Intro Meeting', date: 'Sept 6', pdf: '/lectures/fall-2026-01-intro-meeting.pdf' },
+    ]
   },
   {
     id: 'spring-2026',
@@ -719,15 +723,7 @@ export default function App() {
                       <span className="text-xs text-[#78716c] font-normal">{lec.description}</span>
                     </div>
 
-                    {/* Responsive Google Slides iFrame Container (16:9 ratio) */}
-                    <div className="w-full relative rounded-2xl overflow-hidden border border-[#e7e5e4] bg-[#0f172a] aspect-video">
-                      <iframe
-                        src={lec.embedUrl}
-                        title={`${lec.term} Slides Presentation`}
-                        className="absolute top-0 left-0 w-full h-full border-0"
-                        allowFullScreen
-                      />
-                    </div>
+                    <SemesterSlides semester={lec} />
                   </div>
                 ))}
               </div>
