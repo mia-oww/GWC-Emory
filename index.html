@@ -3,14 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Girls Who Code at Emory</title>
+    <title>Girls Who Code at Emory (GWC Emory) | Atlanta</title>
+    <meta
+      name="description"
+      content="Girls Who Code at Emory (GWC Emory): Emory University students teaching middle and high school girls in Atlanta to code. Weekly Sunday sessions in Python and web design."
+    />
+    <link rel="canonical" href="https://gwc-emory.vercel.app/" />
+    <meta name="theme-color" content="#faf8f5" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/logo.jpg" />
-    <!-- Add this line: -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Link previews (iMessage, GroupMe, Instagram, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Girls Who Code at Emory" />
+    <meta property="og:title" content="Girls Who Code at Emory (GWC Emory)" />
+    <meta
+      property="og:description"
+      content="Emory University students teaching middle and high school girls in Atlanta to code. Weekly Sunday sessions in Python and web design."
+    />
+    <meta property="og:url" content="https://gwc-emory.vercel.app/" />
+    <meta property="og:image" content="https://gwc-emory.vercel.app/logo.jpg" />
+    <meta property="og:image:alt" content="Emory Girls Who Code logo" />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Club details for Google -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Girls Who Code at Emory",
+        "alternateName": ["GWC Emory", "Emory Girls Who Code", "Emory GWC"],
+        "url": "https://gwc-emory.vercel.app/",
+        "logo": "https://gwc-emory.vercel.app/logo.jpg",
+        "email": "emorygwc@gmail.com",
+        "sameAs": ["https://www.instagram.com/gwcemory/"],
+        "description": "Emory University students teaching middle and high school girls in Atlanta to code.",
+        "address": { "@type": "PostalAddress", "addressLocality": "Atlanta", "addressRegion": "GA", "addressCountry": "US" },
+        "parentOrganization": { "@type": "CollegeOrUniversity", "name": "Emory University" }
+      }
+    </script>
+    <!-- Match the site background right away so there's no white flash while loading -->
+    <style>
+      body { margin: 0; background: #faf8f5; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Summary for search engines and screen readers only (visually hidden, so nothing flashes on load). React replaces it. -->
+      <div style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
+        <h1>Girls Who Code at Emory (GWC Emory)</h1>
+        <p>
+          Emory University students teaching middle and high school girls in Atlanta to code. Weekly Sunday sessions,
+          2–3:30pm, in Python (fall) and web design with HTML, CSS &amp; JavaScript (spring).
+        </p>
+        <p>
+          Contact: <a href="mailto:emorygwc@gmail.com">emorygwc@gmail.com</a> ·
+          Instagram: <a href="https://www.instagram.com/gwcemory/">@gwcemory</a>
+        </p>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
