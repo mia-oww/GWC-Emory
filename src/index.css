@@ -57,6 +57,32 @@ label[for],
   .gwc-shine-btn::after { animation: none; }
 }
 
+/* Teal text with a light glimmer sweeping across it */
+.shimmer-text {
+  color: #00a79d; /* fallback if background-clip: text isn't supported */
+  background-image: linear-gradient(
+    110deg,
+    #00a79d 43%,
+    #4fd1c5 48%,
+    #8fe3da 50%,
+    #4fd1c5 52%,
+    #00a79d 57%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 4s ease-in-out infinite;
+}
+@keyframes text-shimmer {
+  0% { background-position: 100% 0; }
+  55%, 100% { background-position: 0% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-text { animation: none; }
+}
+
 /* Scroll fade-in animations (see src/useScrollFade.js) */
 [data-fade] {
   opacity: 0;

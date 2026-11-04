@@ -6,11 +6,12 @@ const seen = new Set();
 
 // Fades in any element with a data-fade attribute ("up", "left", "right" or "zoom")
 // the first time it scrolls into view. Optional data-fade-delay is in milliseconds.
-// Re-runs whenever `key` changes (e.g. switching tabs) so new elements get picked up.
+// Re-runs whenever `key` changes (e.g. switching tabs), and also picks up elements
+// added later (e.g. new list items) so nothing gets stuck invisible.
 export default function useScrollFade(key) {
   useLayoutEffect(() => {
-    const elements = Array.from(document.querySelectorAll('[data-fade]'));
-    const idFor = (el) => `${key}:${elements.indexOf(el)}`;
+    const idFor = (el) => `${key}:${Array.from(document.querySelectorAll('[data-fade]')).indexOf(el)}`;
+    const watched = new Set();
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -26,15 +27,27 @@ export default function useScrollFade(key) {
       { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
     );
 
-    elements.forEach((el) => {
-      if (seen.has(idFor(el))) {
-        // already shown once: display it right away with no animation
-        el.style.transition = 'none';
-        el.classList.add('is-visible');
-      } else {
-        observer.observe(el);
-      }
-    });
-    return () => observer.disconnect();
+    const register = () => {
+      document.querySelectorAll('[data-fade]:not(.is-visible)').forEach((el) => {
+        if (watched.has(el)) return;
+        watched.add(el);
+        if (seen.has(idFor(el))) {
+          // already shown once: display it right away with no animation
+          el.style.transition = 'none';
+          el.classList.add('is-visible');
+        } else {
+          observer.observe(el);
+        }
+      });
+    };
+
+    register();
+    const mutations = new MutationObserver(register);
+    mutations.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutations.disconnect();
+    };
   }, [key]);
 }

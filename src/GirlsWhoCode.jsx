@@ -2,6 +2,8 @@ import React, { useState, useLayoutEffect } from 'react';
 import SparkleBackground from './SparkleBackground.jsx';
 import Cursor from "./Cursor";
 import useScrollFade from './useScrollFade';
+import EventCalendar from './EventCalendar';
+import BackToTop from './BackToTop';
 import { 
   BookOpen, 
   Code2, 
@@ -76,21 +78,23 @@ const FAQS = [
   },
   {
     q: "When and where do the weekend teaching sessions happen?",
-    a: "We meet every Sunday at 2pm on the Emory campus (Math & Science Center). We provide parking passes and snacks for all volunteers."
+    a: "We meet every Sunday from 2–3:30pm on the Emory campus (Math & Science Center). Please check the website calendar for our current events and locations."
   },
   {
     q: "Do you supply lesson slides and exercises?",
-    a: "Yes! Our curriculum team writes all the slides, fun starter templates, and cheat sheets ahead of time, so you never have to prepare materials from scratch."
+    a: "We don't supply lectures or worksheets directly, but we do share the lectures and worksheets that previous GWC Emory teachers have made, so you have a starting point. If you need any changes, reach out to one of our team members!"
   }
 ];
 
-// Board members shown on the home page. Replace these placeholders with real info;
-// add a `photo` URL (e.g. '/team/jane.jpg' in the public folder) to show a picture instead of initials.
+// Board members shown on the home page, in order of rank.
+// Photos live in public/team/; leave `photo` null to show initials instead.
 const TEAM = [
-  { name: 'Member Name', role: 'President', blurb: 'Year · Major', photo: null },
-  { name: 'Member Name', role: 'Vice President', blurb: 'Year · Major', photo: null },
-  { name: 'Member Name', role: 'Curriculum Lead', blurb: 'Year · Major', photo: null },
-  { name: 'Member Name', role: 'Outreach Lead', blurb: 'Year · Major', photo: null },
+  { name: 'Sarah Roodin', role: 'President', year: 2027, blurb: 'Finance & Data Science (Goizueta BBA)', photo: '/team/sarah-roodin.jpg' },
+  { name: 'Ainsley Freedman', role: 'Vice President', year: 2027, blurb: 'Jewish Studies (BA) · Computer Science Minor', photo: '/team/ainsley-freedman.jpg' },
+  { name: 'Shuhuan Zhou', role: 'Treasurer', year: 2029, blurb: 'Business Administration (Goizueta BBA)', photo: '/team/shuhuan-zhou.jpg' },
+  { name: 'Abby Arroyo', role: 'External Affairs', year: 2028, blurb: 'Biology · Data & Decision Sciences Minor', photo: '/team/abby-arroyo.jpg' },
+  { name: 'Mia Gomez', role: 'Risk & Events · Website Engineer', year: 2028, blurb: 'CS & AI · Korean Minor', photo: '/team/mia-gomez.jpg' },
+  { name: 'Rena Bernardino', role: 'Marketing & Social Media', year: 2028, blurb: 'Economics & Computer Science', photo: '/team/rena-bernardino.jpg' },
 ];
 
 const initials = (name) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -102,8 +106,12 @@ const FAMILY_FAQS = [
     a: "Not at all! Our sessions assume zero prior experience, and Emory mentors help every student at her own pace."
   },
   {
+    q: "Does my daughter need a computer to join or code?",
+    a: "No, it is not necessary for your daughter to have her own technology. We use the Emory computer science lab computers. In case of any technical difficulties, we will always print out worksheets for the girls to practice what they've learned from the lecture."
+  },
+  {
     q: "When and where do sessions happen?",
-    a: "Every Sunday at 2pm in the Emory Math & Science Center (MSC) computer classrooms."
+    a: "Every Sunday from 2–3:30pm in the Emory Math & Science Center (MSC) computer classrooms."
   },
   {
     q: "What will she learn?",
@@ -276,6 +284,7 @@ export default function App() {
 <div className="min-h-screen text-[#2c3e50] font-sans antialiased selection:bg-[#ccfbf1] selection:text-[#005f56]">
       <SparkleBackground/>
       <Cursor />
+      <BackToTop />
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-[#faf8f5]/95 backdrop-blur-md border-b border-[#e7e5e4]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -334,7 +343,7 @@ export default function App() {
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-2">
               <div className="lg:col-span-7 space-y-6 text-left">
                 <h1 data-fade="up" className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#002169] leading-[1.05] tracking-tight">
-                  Welcome to <span className="text-[#00a79d]">Girls Who Code</span> at Emory!
+                  Welcome to <span className="shimmer-text">Girls Who Code</span> at Emory!
                 </h1>
                 
                 <p data-fade="up" data-fade-delay="200" className="text-base text-[#57534e] leading-relaxed max-w-xl">
@@ -360,7 +369,7 @@ export default function App() {
 
                 <div data-fade="up" data-fade-delay="600" className="pt-4 flex items-center gap-6 text-xs text-[#78716c]">
                   <span className="flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-[#8b5cf6]" aria-hidden="true" /> Every Sunday at 2pm
+                    <Calendar className="w-4 h-4 text-[#8b5cf6]" aria-hidden="true" /> Every Sunday from 2–3:30pm
                   </span>
                   <span className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-[#ec4899]" aria-hidden="true" /> On Emory's Campus
@@ -388,7 +397,7 @@ export default function App() {
                     <p className="pl-4 text-[#a8a29e] italic"># spring: front-end web design</p>
                     <p className="pl-4">skills.append(<span className="text-[#10b981]">&quot;interactive web&quot;</span>)</p>
                     <p className="pl-4"><span className="text-[#8b5cf6]">return</span> <span className="text-[#ec4899]">&quot;she built it herself! <Sparkles className="inline w-3.5 h-3.5 align-[-2px]" aria-hidden="true" />&quot;</span></p>
-                    <p className="pt-2 text-[#3b82f6]">&gt; session ready on campus every Sunday at 2pm</p>
+                    <p className="pt-2 text-[#3b82f6]">&gt; session ready on campus every Sunday from 2–3:30pm</p>
                   </div>
 
                   <div className="mt-5 p-3.5 rounded-2xl bg-[#f8f5ff] flex items-center justify-between text-xs">
@@ -431,7 +440,7 @@ export default function App() {
                 <AudienceTag audience="mentors" />
                 <h2 className="text-xl font-medium text-[#002169]">Want to Become a Mentor?</h2>
                 <p className="text-sm text-[#57534e] leading-relaxed">
-                  Teach a mini-lecture or help out at the tables. Every major is welcome.
+                  Teach a lecture or help out at the tables. Every major is welcome.
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2563eb]">
                   Information for Mentors <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
@@ -487,27 +496,40 @@ export default function App() {
               </div>
             </section>
 
+            {/* Events Calendar */}
+            <section className="space-y-6 pt-4">
+              <div data-fade="up" className="text-left space-y-1">
+                <span className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold">Calendar</span>
+                <h2 className="text-2xl font-medium text-[#002169]">Upcoming Events</h2>
+              </div>
+              <div data-fade="up" data-fade-delay="150">
+                <EventCalendar />
+              </div>
+            </section>
+
             {/* Our Team */}
             <section className="space-y-6 pt-4">
               <div data-fade="up" className="text-left space-y-1">
                 <span className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold">Our Team</span>
-                <h2 className="text-2xl font-medium text-[#002169]">Meet the Board</h2>
+                <h2 className="text-2xl font-medium text-[#002169]">
+                  Meet the Board <span className="text-[#78716c] font-normal text-lg">(2026–2027)</span>
+                </h2>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                 {TEAM.map((member, idx) => (
-                  <div key={idx} data-fade="up" data-fade-delay={100 + (idx % 4) * 100}>
+                  <div key={idx} data-fade="up" data-fade-delay={100 + (idx % 3) * 100}>
                     <div className="h-full p-6 rounded-3xl bg-white border border-[#e7e5e4] shadow-sm text-center space-y-3 transition-transform duration-300 hover:-translate-y-1">
                       {member.photo ? (
                         <img
                           src={member.photo}
                           alt={`Photo of ${member.name}`}
-                          className="w-20 h-20 mx-auto rounded-full object-cover"
+                          className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full object-cover"
                         />
                       ) : (
                         <div
                           aria-hidden="true"
-                          className="w-20 h-20 mx-auto rounded-full bg-linear-to-br from-[#00b5ad] to-[#7c4dff] text-white flex items-center justify-center font-display text-xl"
+                          className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full bg-linear-to-br from-[#00b5ad] to-[#7c4dff] text-white flex items-center justify-center font-display text-2xl"
                         >
                           {initials(member.name)}
                         </div>
@@ -515,8 +537,9 @@ export default function App() {
                       <div>
                         <h3 className="font-medium text-[#002169]">{member.name}</h3>
                         <p className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold mt-1">{member.role}</p>
+                        <p className="text-xs font-medium text-[#002169]/80 mt-1">Class of {member.year}</p>
+                        <p className="text-xs text-[#78716c] mt-1.5">{member.blurb}</p>
                       </div>
-                      <p className="text-xs text-[#78716c]">{member.blurb}</p>
                     </div>
                   </div>
                 ))}
@@ -533,7 +556,7 @@ export default function App() {
               </div>
               <h2 className="text-2xl sm:text-3xl font-medium">Thinking About Getting Involved?</h2>
               <p className="text-sm sm:text-base text-[#3b5288] max-w-xl mx-auto leading-relaxed">
-                Whether you want to lead a 20-minute Python lesson or sit alongside a 7th grader to help her fix a typo, your encouragement makes all the difference.
+                Whether you want to lead an hour-long Python lesson or sit alongside a 7th grader to help her fix a typo, your encouragement makes all the difference.
               </p>
               <div className="pt-2">
                 <button
@@ -798,7 +821,7 @@ export default function App() {
                   <Calendar className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <h2 className="text-base font-medium text-[#002169]">When & Where</h2>
-                <p className="text-sm text-[#57534e] leading-relaxed">Every Sunday at 2pm in the Emory Math & Science Center (MSC) computer classrooms.</p>
+                <p className="text-sm text-[#57534e] leading-relaxed">Every Sunday from 2–3:30pm in the Emory Math & Science Center (MSC) computer classrooms.</p>
               </div>
 
               <div data-fade="up" data-fade-delay="300" className="p-6 rounded-3xl bg-white border border-[#e7e5e4] space-y-3">
@@ -810,7 +833,7 @@ export default function App() {
               </div>
             </div>
 
-            <section data-fade="zoom" className="p-8 rounded-3xl bg-white/90 border border-[#e7e5e4] shadow-sm text-[#002169] space-y-4 text-center">
+            <section data-fade="zoom" data-fade-delay="450" className="p-8 rounded-3xl bg-white/90 border border-[#e7e5e4] shadow-sm text-[#002169] space-y-4 text-center">
               <h2 className="text-xl font-medium">Interested in Joining?</h2>
               <p className="text-sm text-[#3b5288] max-w-md mx-auto leading-relaxed">
                 Send us an email and we'll follow up with next steps.
@@ -832,7 +855,7 @@ export default function App() {
               </div>
             </section>
 
-            <section data-fade="up" className="space-y-4 pt-4">
+            <section data-fade="up" data-fade-delay="650" className="space-y-4 pt-4">
               <div className="flex items-center gap-2 text-[#002169]">
                 <HelpCircle className="w-4 h-4 text-[#ec4899]" aria-hidden="true" />
                 <h2 className="text-lg font-medium">Questions From Families</h2>
@@ -851,7 +874,7 @@ export default function App() {
               <AudienceTag audience="mentors" />
               <h1 className="text-3xl font-medium text-[#002169]">Mentoring With Us at Emory</h1>
               <p className="text-sm text-[#57534e] leading-relaxed">
-                You don't need any prior teaching background, and you don't have to be a computer science whiz. We provide all slides, templates, and encouragement.
+                You don't need to be a computer science major or have any CS or teaching background! We'll provide lectures and worksheets from previous years for you to build from. And while Girls Who Code isn't designed to teach Emory students to program, helping out with lectures or working with students is a great way to pick up some programming basics along the way!
               </p>
             </header>
 
@@ -860,13 +883,13 @@ export default function App() {
                 <div className="w-10 h-10 rounded-2xl bg-[#dbeafe] text-[#2563eb] flex items-center justify-center font-bold">
                   <BookOpen className="w-5 h-5" aria-hidden="true" />
                 </div>
-                <h2 className="text-lg font-medium text-[#002169]">Teach a Mini-Lecture</h2>
+                <h2 className="text-lg font-medium text-[#002169]">Teach a Lecture</h2>
                 <p className="text-sm text-[#57534e] leading-relaxed">
-                  Want to practice public speaking in a warm environment? You can lead a 20-minute topic on Python variables, loops, or simple HTML buttons.
+                  Want to practice public speaking in a warm environment? You can lead a roughly hour-long lecture on Python variables, loops, or simple HTML buttons.
                 </p>
                 <div className="p-3.5 rounded-2xl bg-[#faf8f5] text-xs text-[#78716c] leading-relaxed flex items-start gap-2">
                   <Lightbulb className="w-4 h-4 shrink-0 text-[#8b5cf6]" aria-hidden="true" />
-                  We provide the slides and speaking notes in advance so you feel completely prepared.
+                  You'll get lectures and worksheets from previous years to build from, so you never start from scratch.
                 </div>
               </div>
 
@@ -893,12 +916,12 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-[#57534e] pt-1">
                 <div>
                   <span className="text-xs uppercase text-[#78716c] block">Fall Sessions</span>
-                  <p className="font-normal mt-0.5">Every Sunday at 2pm</p>
+                  <p className="font-normal mt-0.5">Every Sunday from 2–3:30pm</p>
                   <p className="text-xs text-[#78716c]">Focus: Python basics & logic games</p>
                 </div>
                 <div>
                   <span className="text-xs uppercase text-[#78716c] block">Spring Sessions</span>
-                  <p className="font-normal mt-0.5">Every Sunday at 2pm</p>
+                  <p className="font-normal mt-0.5">Every Sunday from 2–3:30pm</p>
                   <p className="text-xs text-[#78716c]">Focus: HTML, CSS & JavaScript</p>
                 </div>
               </div>
