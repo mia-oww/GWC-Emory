@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Download, ExternalLink } from 'lucide-react';
+import { Download, ExternalLink, Presentation } from 'lucide-react';
 
 // Shows a semester's slides. A semester can either have a single Google Slides `embedUrl`,
 // or a `lectures` list where each lecture has a `pdf` (in public/lectures/) or its own `embedUrl`.
+// Lectures without either show a "coming soon" placeholder.
 export default function SemesterSlides({ semester }) {
   const lectures = semester.lectures?.length
     ? semester.lectures
@@ -36,13 +37,20 @@ export default function SemesterSlides({ semester }) {
 
       {/* 16:9 viewer */}
       <div className="w-full relative rounded-2xl overflow-hidden border border-[#e7e5e4] bg-[#0f172a] aspect-video">
-        <iframe
-          key={lecture.pdf || lecture.embedUrl}
-          src={lecture.pdf ? `${lecture.pdf}#view=FitH` : lecture.embedUrl}
-          title={`${semester.term}: ${lecture.title}`}
-          className="absolute top-0 left-0 w-full h-full border-0"
-          allowFullScreen
-        />
+        {lecture.pdf || lecture.embedUrl ? (
+          <iframe
+            key={lecture.pdf || lecture.embedUrl}
+            src={lecture.pdf ? `${lecture.pdf}#view=FitH` : lecture.embedUrl}
+            title={`${semester.term}: ${lecture.title}`}
+            className="absolute top-0 left-0 w-full h-full border-0"
+            allowFullScreen
+          />
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#faf8f5] text-[#a8a29e]">
+            <Presentation className="w-8 h-8" aria-hidden="true" />
+            <p className="text-sm">Slides for {lecture.title} coming soon</p>
+          </div>
+        )}
       </div>
 
       {/* PDFs don't display inline on some phones, so always offer open/download links */}

@@ -181,15 +181,23 @@ const SEMESTER_FILTERS = [
 ];
 
 // Lecture decks data
+// Lecture decks. Each lecture can point to a PDF in public/lectures/ (`pdf`) or a Google Slides
+// `embedUrl`. Lectures with neither show a "slides coming soon" placeholder.
+const PLACEHOLDER_LESSONS = ['Lesson 0', 'Lesson 1', 'Lesson 2', 'Lesson 3'];
+const lessonSlots = () => PLACEHOLDER_LESSONS.map((title) => ({ title }));
+
 const DEFAULT_LECTURES = [
   {
     id: 'fall-2026',
     term: 'Fall 2026',
     topic: 'Python Basics & Logic Games',
     description: 'Intro to variables, conditionals, while-loops, and interactive terminal storytelling.',
-    // each lecture can use a PDF in public/lectures/ or a Google Slides `embedUrl`
     lectures: [
-      { title: 'Lecture 1: Intro Meeting', date: 'Sept 6', pdf: '/lectures/fall-2026-01-intro-meeting.pdf' },
+      { title: 'Intro Meeting', date: 'Sept 6', pdf: '/lectures/fall-2026-01-intro-meeting.pdf' },
+      { title: 'Lesson 0', date: 'Sept 13', pdf: '/lectures/fall-2026-lesson-0.pdf' },
+      { title: 'Lesson 1', date: 'Sept 20' },
+      { title: 'Lesson 2', date: 'Sept 27' },
+      { title: 'Lesson 3', date: 'Oct 4' },
     ]
   },
   {
@@ -197,7 +205,7 @@ const DEFAULT_LECTURES = [
     term: 'Spring 2026',
     topic: 'Web Design (HTML, CSS & JavaScript)',
     description: 'Document structure, responsive card layouts, flexbox, and dynamic button clicks.',
-    embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vTZ9thIOAlFtqVu_s-wd2q3xqv8Amw0Nmb6lmm1TjGqLPnkZJichgv_RTWhv-Yh6k7uHORO1320d5cP/pubembed?start=false&loop=true&delayms=3000'
+    lectures: lessonSlots()
   }
 ];
 
@@ -207,14 +215,35 @@ const ARCHIVED_LECTURES = [
     term: 'Fall 2025',
     topic: 'Python Fundamentals & Mini Mad Libs',
     description: 'Foundations of functions, string formatting, input prompts, and text-based problem solving.',
-    embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vTZ9thIOAlFtqVu_s-wd2q3xqv8Amw0Nmb6lmm1TjGqLPnkZJichgv_RTWhv-Yh6k7uHORO1320d5cP/pubembed?start=false&loop=true&delayms=3000'
+    lectures: lessonSlots()
   },
   {
     id: 'spring-2025',
     term: 'Spring 2025',
     topic: 'Creative Front-End & Personal Portfolios',
     description: 'Exploring web aesthetics, CSS color theory, box model concepts, and simple DOM manipulation.',
-    embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vTZ9thIOAlFtqVu_s-wd2q3xqv8Amw0Nmb6lmm1TjGqLPnkZJichgv_RTWhv-Yh6k7uHORO1320d5cP/pubembed?start=false&loop=true&delayms=3000'
+    lectures: lessonSlots()
+  },
+  {
+    id: 'fall-2024',
+    term: 'Fall 2024',
+    topic: 'Python Fundamentals',
+    description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
+    lectures: lessonSlots()
+  },
+  {
+    id: 'spring-2024',
+    term: 'Spring 2024',
+    topic: 'Web Design (HTML, CSS & JavaScript)',
+    description: 'Building and styling web pages, from page structure to interactive buttons.',
+    lectures: lessonSlots()
+  },
+  {
+    id: 'fall-2023',
+    term: 'Fall 2023',
+    topic: 'Python Fundamentals',
+    description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
+    lectures: lessonSlots()
   }
 ];
 
@@ -774,14 +803,7 @@ export default function App() {
                           <p className="text-xs text-[#57534e] leading-relaxed">
                             {arch.description}
                           </p>
-                          <div className="w-full relative rounded-2xl overflow-hidden border border-[#e7e5e4] bg-[#0f172a] aspect-video">
-                            <iframe
-                              src={arch.embedUrl}
-                              title={`${arch.term} Slides Presentation`}
-                              className="absolute top-0 left-0 w-full h-full border-0"
-                              allowFullScreen
-                            />
-                          </div>
+                          <SemesterSlides semester={arch} />
                         </div>
                       )}
                     </div>
