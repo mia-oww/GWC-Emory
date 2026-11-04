@@ -27,16 +27,6 @@ import {
 
 const STUDENT_PROJECTS = [
   {
-    id: 1,
-    title: "Interactive Choose-Your-Own Story",
-    studentGrade: "8th Grade Student",
-    semester: "fall",
-    lang: "Python",
-    description: "A text-adventure game exploring an enchanted forest, built using Python conditionals, input prompts, and functions.",
-    image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=700&q=80",
-    projectUrl: "https://replit.com"
-  },
-  {
     id: 2,
     title: "A Long Way Home",
     studentGrade: "Spring Web Design Student",
@@ -45,26 +35,6 @@ const STUDENT_PROJECTS = [
     description: "An adventure story game about a stray cat finding her way home, built during our spring web design unit.",
     image: "/projects/a-long-way-home.jpg",
     projectUrl: "https://codepen.io/erial/pen/MYWrMEJ"
-  },
-  {
-    id: 3,
-    title: "Study Mood Quiz & Tip Generator",
-    studentGrade: "9th Grade Student",
-    semester: "spring",
-    lang: "JavaScript",
-    description: "A mini interactive web app that asks how your study day is going and generates uplifting study tips and playlist ideas.",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=700&q=80",
-    projectUrl: "https://codepen.io"
-  },
-  {
-    id: 4,
-    title: "Emoji Password Safety Checker",
-    studentGrade: "7th Grade Student",
-    semester: "fall",
-    lang: "Python",
-    description: "A playful Python script testing whether passwords have numbers, symbols, and enough characters with friendly emoji alerts.",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=700&q=80",
-    projectUrl: "https://replit.com"
   }
 ];
 
@@ -98,6 +68,19 @@ const TEAM = [
   { name: 'Rena Bernardino', role: 'Marketing & Social Media', year: 2028, blurb: 'Economics & Computer Science', photo: '/team/rena-bernardino.jpg' },
 ];
 
+// Past boards, shown in a dropdown under the current board. Replace the placeholders with real info;
+// `year` (graduating class) is optional and `photo` can stay null to show initials.
+const BOARD_ROLES = ['President', 'Vice President', 'Treasurer', 'External Affairs', 'Risk & Events', 'Marketing & Social Media'];
+const placeholderBoard = () =>
+  BOARD_ROLES.map((role) => ({ name: 'Member Name', role, year: null, blurb: 'Major · Minor', photo: null }));
+
+const PREVIOUS_BOARDS = [
+  { id: 'board-2025', years: '2025–2026', members: placeholderBoard() },
+  { id: 'board-2024', years: '2024–2025', members: placeholderBoard() },
+  { id: 'board-2023', years: '2023–2024', members: placeholderBoard() },
+  { id: 'board-2022', years: '2022–2023', members: placeholderBoard() },
+];
+
 const initials = (name) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
 // Questions from parents and prospective students (shown on the For Families tab)
@@ -113,6 +96,10 @@ const FAMILY_FAQS = [
   {
     q: "When and where do sessions happen?",
     a: "Every Sunday from 2–3:30pm in the Emory Math & Science Center (MSC) computer classrooms."
+  },
+  {
+    q: "Do we need to provide transportation?",
+    a: "Yes! If possible, please provide transportation for your daughter. We are unable to transport any students to Emory's campus."
   },
   {
     q: "What will she learn?",
@@ -147,6 +134,34 @@ function InstagramIcon({ className }) {
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
     </svg>
+  );
+}
+
+function MemberCard({ member, small = false }) {
+  const photoSize = small ? 'w-16 h-16 sm:w-20 sm:h-20 text-lg' : 'w-24 h-24 sm:w-28 sm:h-28 text-2xl';
+  return (
+    <div className={`h-full ${small ? 'p-4' : 'p-6'} rounded-3xl bg-white border border-[#e7e5e4] shadow-sm text-center space-y-3 transition-transform duration-300 hover:-translate-y-1`}>
+      {member.photo ? (
+        <img
+          src={member.photo}
+          alt={`Photo of ${member.name}`}
+          className={`${photoSize} mx-auto rounded-full object-cover`}
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          className={`${photoSize} mx-auto rounded-full bg-linear-to-br from-[#00b5ad] to-[#7c4dff] text-white flex items-center justify-center font-display`}
+        >
+          {initials(member.name)}
+        </div>
+      )}
+      <div>
+        <h3 className={`font-medium text-[#002169] ${small ? 'text-sm' : ''}`}>{member.name}</h3>
+        <p className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold mt-1">{member.role}</p>
+        {member.year && <p className="text-xs font-medium text-[#002169]/80 mt-1">Class of {member.year}</p>}
+        <p className="text-xs text-[#78716c] mt-1.5">{member.blurb}</p>
+      </div>
+    </div>
   );
 }
 
@@ -253,6 +268,7 @@ export default function App() {
   const [activeSemester, setActiveSemester] = useState('all');
   const [openFaq, setOpenFaq] = useState(null);
   const [expandedArchive, setExpandedArchive] = useState(null);
+  const [expandedBoard, setExpandedBoard] = useState(null);
 
   // jump back to the top of the page whenever the tab changes
   useLayoutEffect(() => {
@@ -393,10 +409,10 @@ export default function App() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('projects')}
+                    onClick={() => setActiveTab('lectures')}
                     className="px-6 py-3 rounded-full bg-white hover:bg-[#f5f5f4] text-[#002169] border border-[#d6d3d1] text-sm font-medium transition-colors cursor-pointer"
                   >
-                    Explore Student Projects
+                    Explore Previous Lectures
                   </button>
                 </div>
 
@@ -405,7 +421,7 @@ export default function App() {
                     <Calendar className="w-4 h-4 text-[#8b5cf6]" aria-hidden="true" /> Every Sunday from 2–3:30pm
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-[#ec4899]" aria-hidden="true" /> On Emory's Campus
+                    <Users className="w-4 h-4 text-[#ec4899]" aria-hidden="true" /> For Middle & High School Girls
                   </span>
                 </div>
               </div>
@@ -545,37 +561,57 @@ export default function App() {
               <div data-fade="up" className="text-left space-y-1">
                 <span className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold">Our Team</span>
                 <h2 className="text-2xl font-medium text-[#002169]">
-                  Meet the Board <span className="text-[#78716c] font-normal text-lg">(2026–2027)</span>
+                  Meet the Executive Board <span className="text-[#78716c] font-normal text-lg">(2026–2027)</span>
                 </h2>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                 {TEAM.map((member, idx) => (
                   <div key={idx} data-fade="up" data-fade-delay={100 + (idx % 3) * 100}>
-                    <div className="h-full p-6 rounded-3xl bg-white border border-[#e7e5e4] shadow-sm text-center space-y-3 transition-transform duration-300 hover:-translate-y-1">
-                      {member.photo ? (
-                        <img
-                          src={member.photo}
-                          alt={`Photo of ${member.name}`}
-                          className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full object-cover"
-                        />
-                      ) : (
-                        <div
-                          aria-hidden="true"
-                          className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full bg-linear-to-br from-[#00b5ad] to-[#7c4dff] text-white flex items-center justify-center font-display text-2xl"
-                        >
-                          {initials(member.name)}
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="font-medium text-[#002169]">{member.name}</h3>
-                        <p className="text-xs uppercase tracking-wider text-[#00a79d] font-semibold mt-1">{member.role}</p>
-                        <p className="text-xs font-medium text-[#002169]/80 mt-1">Class of {member.year}</p>
-                        <p className="text-xs text-[#78716c] mt-1.5">{member.blurb}</p>
-                      </div>
-                    </div>
+                    <MemberCard member={member} />
                   </div>
                 ))}
+              </div>
+
+              {/* Previous Boards */}
+              <div data-fade="up" className="space-y-3 pt-4">
+                <h3 className="text-base font-medium text-[#002169] text-left">Previous Executive Boards</h3>
+                {PREVIOUS_BOARDS.map((board) => {
+                  const isOpen = expandedBoard === board.id;
+                  const panelId = `board-panel-${board.id}`;
+                  return (
+                    <div key={board.id}>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedBoard((prev) => (prev === board.id ? null : board.id))}
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        className="w-full px-5 py-4 flex items-center justify-between text-left rounded-2xl border border-[#e7e5e4] bg-white shadow-sm hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className="px-2.5 py-1 rounded-md bg-[#ede9fe] text-[#6d28d9] font-medium text-xs">
+                            {board.years}
+                          </span>
+                          <span className="text-sm font-medium text-[#002169]">Executive Board</span>
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <span className="text-xs text-[#78716c] hidden sm:inline">{isOpen ? 'Hide' : 'View'}</span>
+                          <ChevronDown
+                            className={`w-4 h-4 text-[#78716c] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                            aria-hidden="true"
+                          />
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div id={panelId} className="pt-4 pb-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
+                          {board.members.map((member, idx) => (
+                            <MemberCard key={idx} member={member} small />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
@@ -672,6 +708,11 @@ export default function App() {
 
             {/* Projects Grid */}
             <div data-fade="up" className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {filteredProjects.length === 0 && (
+                <p className="md:col-span-2 p-8 rounded-3xl bg-white border border-dashed border-[#d6d3d1] text-center text-sm text-[#78716c]">
+                  No projects for this semester yet. Check back soon!
+                </p>
+              )}
               {filteredProjects.map((project) => (
                 <article 
                   key={project.id} 
