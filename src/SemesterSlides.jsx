@@ -3,7 +3,19 @@ import { Download, ExternalLink, Presentation } from 'lucide-react';
 
 // Shows a semester's slides. A semester can either have a single Google Slides `embedUrl`,
 // or a `lectures` list where each lecture has a `pdf` (in public/lectures/) or its own `embedUrl`.
-// Lectures without either show a "coming soon" placeholder.
+// A lecture with neither shows a "coming soon" placeholder (normally hidden by the caller).
+const hasSlides = (lecture) => Boolean(lecture.pdf || lecture.embedUrl);
+
+// Plain count of the decks a semester has, e.g. "6 decks"
+export function SlideCount({ semester }) {
+  const count = (semester.lectures?.length ? semester.lectures : [semester]).filter(hasSlides).length;
+  return (
+    <span className="inline-block px-2.5 py-1 rounded-md bg-[#e6faf7] text-[#0f766e] text-xs font-medium whitespace-nowrap">
+      {count} {count === 1 ? 'deck' : 'decks'}
+    </span>
+  );
+}
+
 export default function SemesterSlides({ semester }) {
   const lectures = semester.lectures?.length
     ? semester.lectures
@@ -35,9 +47,15 @@ export default function SemesterSlides({ semester }) {
         </div>
       )}
 
+      {lecture.topic && (
+        <p className="text-sm font-medium text-[#002169]">
+          {lecture.title}: {lecture.topic}
+        </p>
+      )}
+
       {/* 16:9 viewer */}
       <div className="w-full relative rounded-2xl overflow-hidden border border-[#e7e5e4] bg-[#0f172a] aspect-video">
-        {lecture.pdf || lecture.embedUrl ? (
+        {hasSlides(lecture) ? (
           <iframe
             key={lecture.pdf || lecture.embedUrl}
             src={lecture.pdf ? `${lecture.pdf}#view=FitH` : lecture.embedUrl}

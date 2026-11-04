@@ -4,7 +4,7 @@ import Cursor from "./Cursor";
 import useScrollFade from './useScrollFade';
 import EventCalendar from './EventCalendar';
 import BackToTop from './BackToTop';
-import SemesterSlides from './SemesterSlides';
+import SemesterSlides, { SlideCount } from './SemesterSlides';
 import { 
   BookOpen, 
   Code2, 
@@ -68,17 +68,10 @@ const TEAM = [
   { name: 'Rena Bernardino', role: 'Marketing & Social Media', year: 2028, blurb: 'Economics & Computer Science', photo: '/team/rena-bernardino.jpg' },
 ];
 
-// Past boards, shown in a dropdown under the current board. Replace the placeholders with real info;
-// `year` (graduating class) is optional and `photo` can stay null to show initials.
-const BOARD_ROLES = ['President', 'Vice President', 'Treasurer', 'External Affairs', 'Risk & Events', 'Marketing & Social Media'];
-const placeholderBoard = () =>
-  BOARD_ROLES.map((role) => ({ name: 'Member Name', role, year: null, blurb: 'Major · Minor', photo: null }));
-
+// Past boards, shown in a dropdown under the current board. Add members in the same format as TEAM;
+// a board with no members shows a "check back later" note instead.
 const PREVIOUS_BOARDS = [
-  { id: 'board-2025', years: '2025–2026', members: placeholderBoard() },
-  { id: 'board-2024', years: '2024–2025', members: placeholderBoard() },
-  { id: 'board-2023', years: '2023–2024', members: placeholderBoard() },
-  { id: 'board-2022', years: '2022–2023', members: placeholderBoard() },
+  { id: 'board-2025', years: '2025–2026', members: [] },
 ];
 
 const initials = (name) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -196,31 +189,39 @@ const SEMESTER_FILTERS = [
 ];
 
 // Lecture decks data
-// Lecture decks. Each lecture can point to a PDF in public/lectures/ (`pdf`) or a Google Slides
-// `embedUrl`. Lectures with neither show a "slides coming soon" placeholder.
-const PLACEHOLDER_LESSONS = ['Lesson 0', 'Lesson 1', 'Lesson 2', 'Lesson 3'];
-const lessonSlots = () => PLACEHOLDER_LESSONS.map((title) => ({ title }));
+// Lecture decks. Each lecture can point to a PDF in public/lectures/<semester>/ (`pdf`) or a Google Slides
+// `embedUrl`, plus an optional `topic` and `date`. Lectures with no slides show a "coming soon" placeholder.
+const FALL_LESSONS = ['Lesson 0', 'Lesson 1', 'Lesson 2', 'Lesson 3'];
+const SPRING_LESSONS = ['Lesson 1', 'Lesson 2', 'Lesson 3', 'Lesson 4'];
+const lessonSlots = (titles) => titles.map((title) => ({ title }));
 
 const DEFAULT_LECTURES = [
   {
     id: 'fall-2026',
     term: 'Fall 2026',
-    topic: 'Python Basics & Logic Games',
-    description: 'Intro to variables, conditionals, while-loops, and interactive terminal storytelling.',
+    topic: 'Python Fundamentals',
+    description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
     lectures: [
-      { title: 'Intro Meeting', date: 'Sept 6', pdf: '/lectures/fall-2026-01-intro-meeting.pdf' },
-      { title: 'Lesson 0', date: 'Sept 13', pdf: '/lectures/fall-2026-lesson-0.pdf' },
-      { title: 'Lesson 1', date: 'Sept 20' },
-      { title: 'Lesson 2', date: 'Sept 27' },
-      { title: 'Lesson 3', date: 'Oct 4' },
+      { title: 'Intro Meeting', date: 'Sept 6', pdf: '/lectures/fall-2026/fall-2026-01-intro-meeting.pdf' },
+      { title: 'Lesson 0', topic: 'Welcome to Girls Who Code & Variables', date: 'Sept 13', pdf: '/lectures/fall-2026/fall-2026-lesson-0.pdf' },
+      { title: 'Lesson 1', topic: 'Variables & Data Types: Part 2', pdf: '/lectures/fall-2026/fall-2026-lesson-1.pdf' },
+      { title: 'Lesson 2', topic: 'Conditional Statements', pdf: '/lectures/fall-2026/fall-2026-lesson-2.pdf' },
+      { title: 'Lesson 3' },
+      { title: 'Lesson 4', topic: 'Lists', pdf: '/lectures/fall-2026/fall-2026-lesson-4.pdf' },
+      { title: 'Special Projects', topic: 'Choosing a Special Project', pdf: '/lectures/fall-2026/fall-2026-gwc-special-lecture.pdf' },
     ]
   },
   {
     id: 'spring-2026',
     term: 'Spring 2026',
     topic: 'Web Design (HTML, CSS & JavaScript)',
-    description: 'Document structure, responsive card layouts, flexbox, and dynamic button clicks.',
-    lectures: lessonSlots()
+    description: 'Building and styling web pages, from page structure to interactive buttons.',
+    lectures: [
+      { title: 'Lesson 1', topic: 'Intro to HTML & CSS', pdf: '/lectures/spring-2026/spring-2026-lesson-1.pdf' },
+      { title: 'Lesson 2' },
+      { title: 'Lesson 3' },
+      { title: 'Lesson 4' },
+    ]
   }
 ];
 
@@ -228,40 +229,53 @@ const ARCHIVED_LECTURES = [
   {
     id: 'fall-2025',
     term: 'Fall 2025',
-    topic: 'Python Fundamentals & Mini Mad Libs',
-    description: 'Foundations of functions, string formatting, input prompts, and text-based problem solving.',
-    lectures: lessonSlots()
+    topic: 'Python Fundamentals',
+    description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
+    lectures: lessonSlots(FALL_LESSONS)
   },
   {
     id: 'spring-2025',
     term: 'Spring 2025',
-    topic: 'Creative Front-End & Personal Portfolios',
-    description: 'Exploring web aesthetics, CSS color theory, box model concepts, and simple DOM manipulation.',
-    lectures: lessonSlots()
+    topic: 'Web Design (HTML, CSS & JavaScript)',
+    description: 'Building and styling web pages, from page structure to interactive buttons.',
+    lectures: lessonSlots(SPRING_LESSONS)
   },
   {
     id: 'fall-2024',
     term: 'Fall 2024',
     topic: 'Python Fundamentals',
     description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
-    lectures: lessonSlots()
+    lectures: lessonSlots(FALL_LESSONS)
   },
   {
     id: 'spring-2024',
     term: 'Spring 2024',
     topic: 'Web Design (HTML, CSS & JavaScript)',
     description: 'Building and styling web pages, from page structure to interactive buttons.',
-    lectures: lessonSlots()
+    lectures: [
+      { title: 'Lesson 1', topic: 'Women in Tech & Getting Started', pdf: '/lectures/spring-2024/spring-2024-lesson-1.pdf' },
+      { title: 'Lesson 2', topic: 'The Makings of a Website', pdf: '/lectures/spring-2024/spring-2024-lesson-2.pdf' },
+      { title: 'Lesson 3' },
+      { title: 'Lesson 4' },
+    ]
   },
   {
     id: 'fall-2023',
     term: 'Fall 2023',
     topic: 'Python Fundamentals',
     description: 'Variables, conditionals, loops, and beginner-friendly Python projects.',
-    lectures: lessonSlots()
+    lectures: lessonSlots(FALL_LESSONS)
   }
 ];
 
+// Only show lectures that have slides, and hide semesters with none yet. The empty
+// templates above stay in place, so a semester appears as soon as its first deck is added.
+const withSlidesOnly = (semesters) =>
+  semesters
+    .map((semester) => ({ ...semester, lectures: semester.lectures.filter((lec) => lec.pdf || lec.embedUrl) }))
+    .filter((semester) => semester.lectures.length > 0);
+const VISIBLE_LECTURES = withSlidesOnly(DEFAULT_LECTURES);
+const VISIBLE_ARCHIVED_LECTURES = withSlidesOnly(ARCHIVED_LECTURES);
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -602,13 +616,17 @@ export default function App() {
                           />
                         </span>
                       </button>
-                      {isOpen && (
+                      {isOpen && (board.members.length > 0 ? (
                         <div id={panelId} className="pt-4 pb-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
                           {board.members.map((member, idx) => (
                             <MemberCard key={idx} member={member} small />
                           ))}
                         </div>
-                      )}
+                      ) : (
+                        <p id={panelId} className="py-8 text-center text-sm text-[#78716c]">
+                          Check back later for an update!
+                        </p>
+                      ))}
                     </div>
                   );
                 })}
@@ -771,6 +789,11 @@ export default function App() {
               <p className="text-base text-[#57534e] leading-relaxed font-normal">
                 Parents or Emory students, want to look at the slides from previous years? Feel free to explore our weekly lesson decks, starter prompts, and coding challenges below!
               </p>
+              <p className="text-sm italic text-[#78716c] leading-relaxed">
+                Looking for slides on a specific topic that isn't here? Feel free to{' '}
+                <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#8b5cf6] hover:text-[#002169] underline underline-offset-2">contact us</a>
+                {' '}and we'll help you find them!
+              </p>
             </header>
 
             {/* Default 2 Slide Embeds */}
@@ -781,13 +804,16 @@ export default function App() {
               </div>
 
               <div className="space-y-8">
-                {DEFAULT_LECTURES.map((lec) => (
+                {VISIBLE_LECTURES.map((lec) => (
                   <div key={lec.id} className="p-6 rounded-3xl bg-white border border-[#e7e5e4] shadow-sm space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f5f5f4] pb-3">
                       <div>
-                        <span className="px-3 py-1 rounded-full bg-[#ede9fe] text-[#6d28d9] font-semibold text-xs uppercase tracking-wide">
-                          {lec.term}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-3 py-1 rounded-full bg-[#ede9fe] text-[#6d28d9] font-semibold text-xs uppercase tracking-wide">
+                            {lec.term}
+                          </span>
+                          <SlideCount semester={lec} />
+                        </div>
                         <h3 className="text-lg font-medium text-[#002169] mt-2">{lec.topic}</h3>
                       </div>
                       <span className="text-xs text-[#78716c] font-normal">{lec.description}</span>
@@ -800,58 +826,61 @@ export default function App() {
             </section>
 
             {/* Dropdown / Accordion for Remaining Previous Semesters */}
-            <section data-fade="up" className="space-y-4 pt-4">
-              <div className="flex items-center justify-between border-b border-[#e7e5e4] pb-3">
-                <h2 className="text-base font-medium text-[#002169]">Earlier Semesters & Archived Slides</h2>
-                <span className="text-xs text-[#78716c]">Click Any Semester Below to View Slides</span>
-              </div>
+            {VISIBLE_ARCHIVED_LECTURES.length > 0 && (
+              <section data-fade="up" className="space-y-4 pt-4">
+                <div className="flex items-center justify-between border-b border-[#e7e5e4] pb-3">
+                  <h2 className="text-base font-medium text-[#002169]">Earlier Semesters & Archived Slides</h2>
+                  <span className="text-xs text-[#78716c]">Click Any Semester Below to View Slides</span>
+                </div>
 
-              <div className="space-y-3">
-                {ARCHIVED_LECTURES.map((arch) => {
-                  const isOpen = expandedArchive === arch.id;
-                  const panelId = `archive-deck-${arch.id}`;
+                <div className="space-y-3">
+                  {VISIBLE_ARCHIVED_LECTURES.map((arch) => {
+                    const isOpen = expandedArchive === arch.id;
+                    const panelId = `archive-deck-${arch.id}`;
 
-                  return (
-                    <div 
-                      key={arch.id} 
-                      className="rounded-2xl border border-[#e7e5e4] bg-white overflow-hidden transition-all shadow-sm"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => toggleArchive(arch.id)}
-                        aria-expanded={isOpen}
-                        aria-controls={panelId}
-                        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                    return (
+                      <div 
+                        key={arch.id} 
+                        className="rounded-2xl border border-[#e7e5e4] bg-white overflow-hidden transition-all shadow-sm"
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="px-2.5 py-1 rounded-md bg-[#ede8e1]/70 text-[#002169] font-medium text-xs">
-                            {arch.term}
-                          </span>
-                          <span className="text-sm font-medium text-[#002169]">{arch.topic}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-[#78716c] hidden sm:inline">
-                            {isOpen ? 'Hide Slides' : 'View Slides'}
-                          </span>
-                          <ChevronDown 
-                            className={`w-4 h-4 text-[#78716c] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
-                          />
-                        </div>
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleArchive(arch.id)}
+                          aria-expanded={isOpen}
+                          aria-controls={panelId}
+                          className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                        >
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                            <span className="px-2.5 py-1 rounded-md bg-[#ede9fe] text-[#6d28d9] font-medium text-xs">
+                              {arch.term}
+                            </span>
+                            <span className="text-sm font-medium text-[#002169]">{arch.topic}</span>
+                            <SlideCount semester={arch} />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-[#78716c] hidden sm:inline">
+                              {isOpen ? 'Hide Slides' : 'View Slides'}
+                            </span>
+                            <ChevronDown 
+                              className={`w-4 h-4 text-[#78716c] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+                            />
+                          </div>
+                        </button>
 
-                      {isOpen && (
-                        <div id={panelId} className="px-5 pb-5 pt-2 border-t border-[#f5f5f4] space-y-3">
-                          <p className="text-xs text-[#57534e] leading-relaxed">
-                            {arch.description}
-                          </p>
-                          <SemesterSlides semester={arch} />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+                        {isOpen && (
+                          <div id={panelId} className="px-5 pb-5 pt-2 border-t border-[#f5f5f4] space-y-3">
+                            <p className="text-xs text-[#57534e] leading-relaxed">
+                              {arch.description}
+                            </p>
+                            <SemesterSlides semester={arch} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
           </div>
         )}
 
