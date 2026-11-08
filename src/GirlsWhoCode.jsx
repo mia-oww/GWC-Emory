@@ -413,7 +413,7 @@ export default function App() {
 
                 <div data-fade="up" data-fade-delay="600" className="pt-4 flex items-center gap-6 text-xs text-[#78716c]">
                   <span className="flex items-center gap-1.5">
-                    <Users className="w-4 h-4 text-[#ec4899]" aria-hidden="true" /> For Middle & High School Girls
+                    <Users className="w-4 h-4 text-[#ec4899]" aria-hidden="true" /> Teaching Local Atlanta Middle & High School Girls!
                   </span>
                 </div>
               </div>
