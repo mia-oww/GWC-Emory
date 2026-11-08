@@ -27,7 +27,7 @@ export default function SemesterSlides({ semester }) {
     <div className="space-y-3">
       {/* lecture picker, shown when the semester has a list of lectures */}
       {semester.lectures?.length > 0 && (
-        <div className="flex flex-wrap gap-2" role="group" aria-label={`${semester.term} lectures`}>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={`${semester.term} lessons`}>
           {lectures.map((lec, idx) => (
             <button
               key={lec.title}
