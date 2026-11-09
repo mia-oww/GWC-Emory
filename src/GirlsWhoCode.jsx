@@ -83,7 +83,7 @@ const FAMILY_FAQS = [
   },
   {
     q: "Can family and friends see her work?",
-    a: "Yes! At the end of the year, every student presents her project on campus at our Family & Friends Celebration Showcase."
+    a: "Yes! At the end of each semester, every student presents her project on campus at our Family & Friends Celebration Showcase."
   }
 ];
 
@@ -307,7 +307,7 @@ export default function App() {
               id={faqId}
               role="region"
               aria-labelledby={btnId}
-              className="px-5 pb-4 text-xs text-[#57534e] leading-relaxed"
+              className="px-5 pt-3 pb-5 text-xs text-[#57534e] leading-relaxed"
             >
               {faq.a}
             </div>
@@ -338,9 +338,9 @@ export default function App() {
             className="flex items-center gap-3 group text-left cursor-pointer border-0 bg-transparent p-0"
           >
             <img
-              src="/logo.jpg"
+              src="/logo.png"
               alt="Emory Girls Who Code logo"
-              className="w-12 h-12 rounded-full object-cover shadow-sm transition-transform group-hover:scale-105"
+              className="w-12 h-12 transition-transform group-hover:scale-105"
             />
             <div>
               <span className="text-[#002169] font-medium tracking-tight text-base">Girls Who Code</span>
@@ -832,7 +832,7 @@ export default function App() {
                   <Code2 className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <h2 className="text-base font-medium text-[#002169]">What She'll Learn</h2>
-                <p className="text-sm text-[#57534e] leading-relaxed">Python in the fall, web design with HTML, CSS & JavaScript in the spring, and a showcase to finish the year.</p>
+                <p className="text-sm text-[#57534e] leading-relaxed">Python in the fall, web design with HTML, CSS & JavaScript in the spring, and a showcase at the end of each semester.</p>
               </div>
             </div>
 
